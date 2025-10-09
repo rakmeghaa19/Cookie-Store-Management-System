@@ -158,3 +158,9 @@ Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_
 Hibernate: select o1_0.id,o1_0.cookie_name,o1_0.customer_name,o1_0.order_date,o1_0.quantity,o1_0.status,o1_0.total_price from orders o1_0
 Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
 Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+2025-10-09T11:00:03.957Z  INFO 75151 --- [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+Hibernate: drop table if exists cookie cascade 
+Hibernate: drop table if exists orders cascade 
+Hibernate: drop table if exists users cascade 
+2025-10-09T11:00:03.962Z  INFO 75151 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-10-09T11:00:03.964Z  INFO 75151 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

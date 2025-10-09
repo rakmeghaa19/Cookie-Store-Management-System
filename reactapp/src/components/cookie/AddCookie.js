@@ -110,5 +110,4 @@ function AddCookie() {
     </div>
   );
 }
-
 export default AddCookie;

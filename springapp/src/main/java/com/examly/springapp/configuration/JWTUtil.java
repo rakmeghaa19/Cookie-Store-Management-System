@@ -16,19 +16,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-/**
- * Utility for issuing and validating JWTs (HS256).
- * Works with Spring Security's Resource Server configured in SecurityConfig.
- *
- * Required properties (application.properties / YAML):
- *   app.jwt.secret=<at least 32 chars or base64-encoded 256-bit key>
- *   app.jwt.expiration=3600000
- *   app.jwt.issuer=SpringBootEmp
- */
 @Component
 public class JWTUtil {
-
     private final SecretKey secretKey;
     private final long expirationMs;
     private final String issuer;
