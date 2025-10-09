@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { addCookie } from "../../services/api";
 
 function AddCookie() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [cookieName, setCookieName] = useState("");
   const [flavor, setFlavor] = useState("");
   const [price, setPrice] = useState("");
@@ -8,6 +10,7 @@ function AddCookie() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     // Create the new cookie object
     const cookie = {
@@ -18,93 +21,76 @@ function AddCookie() {
     };
 
     try {
-      const response = await fetch(
-        "https://8080-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/cookies/addCookies",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(cookie),
-        }
-      );
-
-      if (response.ok) {
-        alert("✅ Cookie created successfully!");
-        // Reset form fields
-        setCookieName("");
-        setFlavor("");
-        setPrice("");
-        setQuantityAvailable("");
-      } else {
-        const errMsg = await response.text();
-        alert("❌ Failed to create cookie: " + errMsg);
-      }
+      await addCookie(cookie);
+      alert("✅ Cookie created successfully!");
+      // Reset form fields
+      setCookieName("");
+      setFlavor("");
+      setPrice("");
+      setQuantityAvailable("");
+      // Refresh the page to show new cookie
+      window.location.reload();
     } catch (err) {
       console.error("Error creating cookie:", err);
-      alert("⚠️ Error: " + err.message);
+      alert("❌ Failed to create cookie: " + err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
-      <h2>Add a New Cookie 🍪</h2>
+    <div className="cookie-form">
+      <h3>Add a New Cookie 🍪</h3>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Cookie Name:</label><br />
+        <div>
+          <label>Cookie Name:</label>
           <input
             type="text"
             value={cookieName}
             onChange={(e) => setCookieName(e.target.value)}
+            placeholder="Enter cookie name"
             required
           />
         </div>
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>Flavor:</label><br />
+        <div>
+          <label>Flavor:</label>
           <input
             type="text"
             value={flavor}
             onChange={(e) => setFlavor(e.target.value)}
+            placeholder="Enter flavor"
             required
           />
         </div>
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>Price:</label><br />
+        <div>
+          <label>Price ($):</label>
           <input
             type="number"
+            step="0.01"
+            min="0"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            placeholder="0.00"
             required
           />
         </div>
 
-      
-
-        <div style={{ marginBottom: "10px" }}>
-          <label>Quantity Available:</label><br />
+        <div>
+          <label>Quantity Available:</label>
           <input
             type="number"
+            min="0"
             value={quantityAvailable}
             onChange={(e) => setQuantityAvailable(e.target.value)}
+            placeholder="0"
             required
           />
         </div>
 
-        <button
-          type="submit"
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            padding: "8px 16px",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
-          ➕ Create Cookie
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+          {isSubmitting ? '⏳ Creating...' : '➕ Create Cookie'}
         </button>
       </form>
     </div>

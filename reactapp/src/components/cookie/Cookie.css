@@ -250,11 +250,22 @@
   border-radius: 15px;
   text-align: center;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
 .stat-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.stat-card:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.stat-card.show-all {
+  background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
 }
 
 .stat-number {
@@ -300,12 +311,21 @@
 
 .search-input, .filter-input {
   width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
+  padding: 1rem;
   border: 2px solid #dee2e6;
   border-radius: 15px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: white;
+}
+
+.filter-input {
+  cursor: pointer;
+}
+
+.filter-input option {
+  padding: 0.5rem;
+  font-size: 1rem;
 }
 
 .search-input:focus, .filter-input:focus {
@@ -744,4 +764,78 @@
 
 .cookie-card {
   animation: slideIn 0.3s ease-out;
+}
+
+/* Admin Controls */
+.admin-actions {
+  margin-top: 1rem;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-form input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.admin-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn, .delete-btn, .save-btn, .cancel-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background: #ffc107;
+  color: #333;
+}
+
+.edit-btn:hover {
+  background: #e0a800;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+.save-btn {
+  background: #28a745;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #218838;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
 }

@@ -17,8 +17,37 @@ const AdminOrders = () => {
 
   const loadAllOrders = async () => {
     try {
-      const orders = await getAllOrders();
-      setAllOrders(orders.sort((a, b) => new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)));
+      let allOrdersList = [];
+      
+      // Try to load from backend
+      try {
+        const backendOrders = await getAllOrders();
+        allOrdersList = [...backendOrders];
+      } catch (error) {
+        console.log('Backend orders not available');
+      }
+      
+      // Load from localStorage for all users
+      const allLocalStorageKeys = Object.keys(localStorage);
+      const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
+      
+      orderKeys.forEach(key => {
+        try {
+          const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+          allOrdersList = [...allOrdersList, ...userOrders];
+        } catch (error) {
+          console.log(`Error loading orders from ${key}`);
+        }
+      });
+      
+      // Remove duplicates based on order ID
+      const uniqueOrders = allOrdersList.filter((order, index, self) => 
+        index === self.findIndex(o => o.id === order.id)
+      );
+      
+      setAllOrders(uniqueOrders.sort((a, b) => 
+        new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
+      ));
     } catch (error) {
       console.error('Failed to load orders:', error);
     }
@@ -34,19 +63,49 @@ const AdminOrders = () => {
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
-      await updateOrderStatus(orderId, newStatus);
+      // Try to update in backend
+      try {
+        await updateOrderStatus(orderId, newStatus);
+      } catch (error) {
+        console.log('Backend update failed, updating localStorage');
+      }
+      
+      // Update in localStorage for all users
+      const allLocalStorageKeys = Object.keys(localStorage);
+      const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
+      
+      orderKeys.forEach(key => {
+        try {
+          const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+          const orderFound = userOrders.find(order => order.id === orderId);
+          if (orderFound) {
+            const updatedOrders = userOrders.map(order => 
+              order.id === orderId ? { ...order, status: newStatus } : order
+            );
+            localStorage.setItem(key, JSON.stringify(updatedOrders));
+            console.log(`Updated order ${orderId} status to ${newStatus} in ${key}`);
+          }
+        } catch (error) {
+          console.error(`Error updating orders in ${key}:`, error);
+        }
+      });
+      
+      alert(`Order status updated to ${newStatus}`);
       loadAllOrders();
     } catch (error) {
       console.error('Failed to update order status:', error);
+      alert('Failed to update order status');
     }
   };
 
   const getStatusColor = (status) => {
-    switch(status) {
-      case 'Delivered': return '#22c55e';
-      case 'Processing': return '#f59e0b';
-      case 'Shipped': return '#3b82f6';
-      case 'Cancelled': return '#ef4444';
+    switch(status?.toUpperCase()) {
+      case 'COMPLETED': case 'DELIVERED': return '#22c55e';
+      case 'PENDING': return '#ffc107';
+      case 'CONFIRMED': return '#007bff';
+      case 'PROCESSING': return '#f59e0b';
+      case 'SHIPPED': return '#3b82f6';
+      case 'CANCELLED': return '#ef4444';
       default: return '#6b7280';
     }
   };
@@ -61,10 +120,12 @@ const AdminOrders = () => {
           className="status-filter"
         >
           <option value="All">All Orders ({allOrders.length})</option>
-          <option value="Processing">Processing</option>
-          <option value="Shipped">Shipped</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Cancelled">Cancelled</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="PROCESSING">Processing</option>
+          <option value="SHIPPED">Shipped</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
         </select>
       </div>
 
@@ -87,7 +148,7 @@ const AdminOrders = () => {
                   >
                     {order.status}
                   </span>
-                  <span className="order-total">${order.total.toFixed(2)}</span>
+                  <span className="order-total">${(order.total || order.totalPrice || 0).toFixed(2)}</span>
                 </div>
               </div>
               
@@ -96,34 +157,42 @@ const AdminOrders = () => {
                   <div key={index} className="order-item">
                     <span>{item.cookieName || item.name}</span>
                     <span>{item.flavor} × {item.quantity}</span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    <span>${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
 
               <div className="order-actions">
-                {order.status === 'Processing' && (
+                {(order.status === 'CONFIRMED' || order.status === 'PENDING') && (
+                  <button 
+                    onClick={() => handleUpdateOrderStatus(order.id, 'PROCESSING')}
+                    className="process-btn"
+                  >
+                    🔄 Start Processing
+                  </button>
+                )}
+                {order.status === 'PROCESSING' && (
                   <>
                     <button 
-                      onClick={() => handleUpdateOrderStatus(order.id, 'Shipped')}
+                      onClick={() => handleUpdateOrderStatus(order.id, 'SHIPPED')}
                       className="ship-btn"
                     >
-                      Ship Order
+                      🚚 Ship Order
                     </button>
                     <button 
-                      onClick={() => handleUpdateOrderStatus(order.id, 'Cancelled')}
+                      onClick={() => handleUpdateOrderStatus(order.id, 'CANCELLED')}
                       className="cancel-btn"
                     >
-                      Cancel
+                      ❌ Cancel
                     </button>
                   </>
                 )}
-                {order.status === 'Shipped' && (
+                {order.status === 'SHIPPED' && (
                   <button 
-                    onClick={() => handleUpdateOrderStatus(order.id, 'Delivered')}
+                    onClick={() => handleUpdateOrderStatus(order.id, 'COMPLETED')}
                     className="deliver-btn"
                   >
-                    Mark Delivered
+                    ✅ Mark Completed
                   </button>
                 )}
               </div>

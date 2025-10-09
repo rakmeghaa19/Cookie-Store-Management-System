@@ -17,7 +17,10 @@ const Navbar = ({ user, onLogout }) => {
     <nav className="navbar">
       <div className="nav-container">
         <div className="nav-brand" onClick={() => navigate('/dashboard')}>
-          Cookie Store
+          <div className="logo">
+            <span className="logo-icon">🍪</span>
+            <span className="logo-text">LuxeBite M's Cookie</span>
+          </div>
         </div>
         
         {user && (

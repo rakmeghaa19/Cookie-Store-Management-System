@@ -13,10 +13,13 @@ const Wishlist = ({ user }) => {
     setWishlistItems(savedWishlist);
   };
 
-  const removeFromWishlist = (cookieId) => {
-    const updatedWishlist = wishlistItems.filter(item => item.id !== cookieId);
-    setWishlistItems(updatedWishlist);
-    localStorage.setItem(`wishlist_${user.username}`, JSON.stringify(updatedWishlist));
+  const removeFromWishlist = (cookieId, cookieName) => {
+    if (window.confirm(`Remove ${cookieName} from wishlist?`)) {
+      const updatedWishlist = wishlistItems.filter(item => item.id !== cookieId);
+      setWishlistItems(updatedWishlist);
+      localStorage.setItem(`wishlist_${user.username}`, JSON.stringify(updatedWishlist));
+      alert(`${cookieName} removed from wishlist!`);
+    }
   };
 
   const moveToCart = (item) => {
@@ -35,8 +38,11 @@ const Wishlist = ({ user }) => {
   };
 
   const clearWishlist = () => {
-    setWishlistItems([]);
-    localStorage.removeItem(`wishlist_${user.username}`);
+    if (window.confirm(`Remove all ${wishlistItems.length} items from wishlist?`)) {
+      setWishlistItems([]);
+      localStorage.removeItem(`wishlist_${user.username}`);
+      alert('Wishlist cleared!');
+    }
   };
 
   return (
@@ -44,7 +50,7 @@ const Wishlist = ({ user }) => {
       <div className="wishlist-header">
         <h2>💝 My Wishlist</h2>
         {wishlistItems.length > 0 && (
-          <button onClick={clearWishlist} className="clear-btn">Clear All</button>
+          <button onClick={clearWishlist} className="clear-btn">🗑️ Clear All</button>
         )}
       </div>
 
@@ -52,7 +58,7 @@ const Wishlist = ({ user }) => {
         <div className="empty-wishlist">
           <p>Your wishlist is empty</p>
           <button onClick={() => window.location.href = '/cookies'} className="shop-btn">
-            Browse Cookies
+            🍪 Browse Cookies
           </button>
         </div>
       ) : (
@@ -78,8 +84,8 @@ const Wishlist = ({ user }) => {
                 >
                   {item.quantityAvailable === 0 ? 'Out of Stock' : 'Add to Cart'}
                 </button>
-                <button onClick={() => removeFromWishlist(item.id)} className="remove-btn">
-                  Remove
+                <button onClick={() => removeFromWishlist(item.id, item.cookieName)} className="remove-btn">
+                  🗑️ Remove
                 </button>
               </div>
             </div>

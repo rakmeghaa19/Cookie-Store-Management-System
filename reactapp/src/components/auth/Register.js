@@ -29,7 +29,12 @@ const Register = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Register</h2>
+        <div className="brand-header">
+          <div className="cookie-logo">🍪</div>
+          <h1 className="brand-name">LuxeBite M's Cookie</h1>
+          <p className="brand-tagline">Premium Handcrafted Cookies</p>
+        </div>
+        <h2>Join Our Family</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input

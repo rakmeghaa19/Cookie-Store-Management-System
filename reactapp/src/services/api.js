@@ -36,7 +36,8 @@ export async function searchCookies(name) {
   const res = await fetch(`${API_BASE}/api/cookies/search?name=${encodeURIComponent(name)}`, {
     headers: getAuthHeaders()
   });
-  return handleResponse(res);
+  const data = await handleResponse(res);
+  return { data };
 }
 
 export async function getCookiesByFlavor(flavor) {

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createOrder } from '../../services/api';
 
 import './Cart.css';
 
 const Cart = ({ user }) => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
@@ -13,6 +15,12 @@ const Cart = ({ user }) => {
   const [customerName, setCustomerName] = useState('');
   const [deliveryOption, setDeliveryOption] = useState('pickup');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [cardName, setCardName] = useState('');
   const [estimatedDelivery, setEstimatedDelivery] = useState('');
   const [tax, setTax] = useState(0);
   const [itemCount, setItemCount] = useState(0);
@@ -131,15 +139,28 @@ const Cart = ({ user }) => {
     localStorage.removeItem(`cart_${user.username}`);
   };
 
-  const checkout = async () => {
+  const proceedToPayment = () => {
     if (!customerName.trim()) {
       alert('Please enter customer name');
       return;
+    }
+    setShowPayment(true);
+  };
+
+  const processPayment = async () => {
+    if (paymentMethod === 'card') {
+      if (!cardNumber || !expiryDate || !cvv || !cardName) {
+        alert('Please fill all card details');
+        return;
+      }
     }
     
     setIsCheckingOut(true);
     
     try {
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       // Save to localStorage first (always works)
       const order = {
         id: Date.now().toString(),
@@ -151,7 +172,8 @@ const Cart = ({ user }) => {
         deliveryOption: deliveryOption,
         notes: orderNotes,
         customerName: customerName,
-        status: 'PENDING'
+        paymentMethod: paymentMethod,
+        status: 'CONFIRMED'
       };
       
       const orders = JSON.parse(localStorage.getItem(`orders_${user.username}`) || '[]');
@@ -173,15 +195,21 @@ const Cart = ({ user }) => {
         console.log('Backend unavailable, order saved locally');
       }
       
-      alert(`Order placed successfully! Total: ₹${total.toFixed(2)}`);
+      alert(`Payment successful! Order confirmed. Total: $${total.toFixed(2)}`);
       clearCart();
       setCustomerName('');
       setOrderNotes('');
       setCouponCode('');
       setDiscount(0);
+      setShowPayment(false);
+      setCardNumber('');
+      setExpiryDate('');
+      setCvv('');
+      setCardName('');
+      navigate('/orders');
     } catch (error) {
-      console.error('Checkout error:', error);
-      alert('Order saved locally. Total: ₹' + total.toFixed(2));
+      console.error('Payment error:', error);
+      alert('Payment failed. Please try again.');
     }
     
     setIsCheckingOut(false);
@@ -210,7 +238,7 @@ const Cart = ({ user }) => {
         <div className="header-actions">
           {cartItems.length > 0 && (
             <>
-              <button onClick={() => window.location.href = '/cookies'} className="continue-btn">
+              <button onClick={() => navigate('/cookies')} className="continue-btn">
                 Continue Shopping
               </button>
               <button onClick={clearCart} className="clear-btn">Clear Cart</button>
@@ -224,7 +252,7 @@ const Cart = ({ user }) => {
           <div className="empty-icon">🛍️</div>
           <h3>Your cart is empty</h3>
           <p>Add some delicious cookies to get started!</p>
-          <button onClick={() => window.location.href = '/cookies'} className="shop-btn">
+          <button onClick={() => navigate('/cookies')} className="shop-btn">
             Browse Cookies
           </button>
         </div>
@@ -393,13 +421,90 @@ const Cart = ({ user }) => {
               </div>
             </div>
             
-            <button 
-              onClick={checkout} 
-              className="checkout-btn"
-              disabled={isCheckingOut || !customerName.trim()}
-            >
-              {isCheckingOut ? 'Processing...' : 'Place Order'}
-            </button>
+            {!showPayment ? (
+              <button 
+                onClick={proceedToPayment} 
+                className="checkout-btn"
+                disabled={!customerName.trim()}
+              >
+                💳 Proceed to Payment
+              </button>
+            ) : (
+              <div className="payment-section">
+                <h3>💳 Payment Details</h3>
+                
+                <div className="payment-methods">
+                  <label>
+                    <input
+                      type="radio"
+                      value="card"
+                      checked={paymentMethod === 'card'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    💳 Credit/Debit Card
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="cash"
+                      checked={paymentMethod === 'cash'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    💰 Cash on Delivery
+                  </label>
+                </div>
+
+                {paymentMethod === 'card' && (
+                  <div className="card-details">
+                    <input
+                      type="text"
+                      placeholder="Card Number"
+                      value={cardNumber}
+                      onChange={(e) => setCardNumber(e.target.value)}
+                      maxLength="16"
+                    />
+                    <div className="card-row">
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        value={expiryDate}
+                        onChange={(e) => setExpiryDate(e.target.value)}
+                        maxLength="5"
+                      />
+                      <input
+                        type="text"
+                        placeholder="CVV"
+                        value={cvv}
+                        onChange={(e) => setCvv(e.target.value)}
+                        maxLength="3"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Cardholder Name"
+                      value={cardName}
+                      onChange={(e) => setCardName(e.target.value)}
+                    />
+                  </div>
+                )}
+
+                <div className="payment-buttons">
+                  <button 
+                    onClick={() => setShowPayment(false)}
+                    className="back-btn"
+                  >
+                    ← Back
+                  </button>
+                  <button 
+                    onClick={processPayment}
+                    className="pay-btn"
+                    disabled={isCheckingOut}
+                  >
+                    {isCheckingOut ? '⏳ Processing...' : `💰 Pay $${total.toFixed(2)}`}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}
