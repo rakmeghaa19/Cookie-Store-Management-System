@@ -34,68 +34,127 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.2)
 
-2025-10-09T10:24:32.690Z  INFO 67833 --- [           main] c.examly.springapp.SpringappApplication  : Starting SpringappApplication using Java 17.0.15 with PID 67833 (/home/coder/project/workspace/springapp/target/classes started by coder in /home/coder/project/workspace/springapp)
-2025-10-09T10:24:32.693Z  INFO 67833 --- [           main] c.examly.springapp.SpringappApplication  : No active profile set, falling back to 1 default profile: "default"
-2025-10-09T10:24:33.233Z  INFO 67833 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-10-09T10:24:33.278Z  INFO 67833 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 38 ms. Found 3 JPA repository interfaces.
-2025-10-09T10:24:33.665Z  INFO 67833 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
-2025-10-09T10:24:33.674Z  INFO 67833 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-10-09T10:24:33.674Z  INFO 67833 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
-2025-10-09T10:24:33.715Z  INFO 67833 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-10-09T10:24:33.716Z  INFO 67833 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 990 ms
-2025-10-09T10:24:33.761Z  INFO 67833 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-10-09T10:24:33.900Z  INFO 67833 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
-2025-10-09T10:24:33.901Z  INFO 67833 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-10-09T10:24:33.911Z  INFO 67833 --- [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
-2025-10-09T10:24:33.999Z  INFO 67833 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-10-09T10:24:34.031Z  INFO 67833 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
-2025-10-09T10:24:34.053Z  INFO 67833 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-10-09T10:24:34.213Z  INFO 67833 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-10-09T10:24:34.245Z  WARN 67833 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-10-09T10:24:34.831Z  INFO 67833 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-09T10:41:46.816Z  INFO 75151 --- [           main] c.examly.springapp.SpringappApplication  : Starting SpringappApplication using Java 17.0.15 with PID 75151 (/home/coder/project/workspace/springapp/target/classes started by coder in /home/coder/project/workspace/springapp)
+2025-10-09T10:41:46.819Z  INFO 75151 --- [           main] c.examly.springapp.SpringappApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-10-09T10:41:47.362Z  INFO 75151 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-09T10:41:47.406Z  INFO 75151 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 37 ms. Found 3 JPA repository interfaces.
+2025-10-09T10:41:47.883Z  INFO 75151 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-09T10:41:47.933Z  INFO 75151 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-09T10:41:47.935Z  INFO 75151 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2025-10-09T10:41:47.986Z  INFO 75151 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-09T10:41:48.032Z  INFO 75151 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1135 ms
+2025-10-09T10:41:48.076Z  INFO 75151 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-09T10:41:48.208Z  INFO 75151 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2025-10-09T10:41:48.209Z  INFO 75151 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-09T10:41:48.218Z  INFO 75151 --- [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2025-10-09T10:41:48.315Z  INFO 75151 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-09T10:41:48.352Z  INFO 75151 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2025-10-09T10:41:48.382Z  INFO 75151 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-09T10:41:48.587Z  INFO 75151 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-09T10:41:48.619Z  WARN 75151 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-09T10:41:49.268Z  INFO 75151 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
 Hibernate: drop table if exists cookie cascade 
 Hibernate: drop table if exists orders cascade 
 Hibernate: drop table if exists users cascade 
 Hibernate: create table cookie (price integer not null, quantity_available integer not null, id bigint generated by default as identity, cookie_name varchar(255), flavor varchar(255), primary key (id))
 Hibernate: create table orders (quantity integer not null, total_price integer not null, id bigint generated by default as identity, order_date timestamp(6), cookie_name varchar(255), customer_name varchar(255), status varchar(255), primary key (id))
 Hibernate: create table users (id bigint generated by default as identity, password varchar(255) not null, role varchar(255) check (role in ('ADMIN','USER','BAKER','MANAGER')), username varchar(255) not null unique, primary key (id))
-2025-10-09T10:24:34.868Z  INFO 67833 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-10-09T10:24:35.271Z  WARN 67833 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-10-09T10:24:35.468Z  INFO 67833 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@18f794e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@389a9ff6, org.springframework.security.web.context.SecurityContextHolderFilter@5f8a29ca, org.springframework.security.web.header.HeaderWriterFilter@65871cfd, org.springframework.web.filter.CorsFilter@15af06f, org.springframework.security.web.authentication.logout.LogoutFilter@58038583, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@492d38a2, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3fc2e100, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@76876421, org.springframework.security.web.session.SessionManagementFilter@2f97e3de, org.springframework.security.web.access.ExceptionTranslationFilter@198a0416, org.springframework.security.web.access.intercept.AuthorizationFilter@13b5598b]
-2025-10-09T10:24:35.654Z  WARN 67833 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
-2025-10-09T10:24:35.657Z  INFO 67833 --- [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-Hibernate: drop table if exists cookie cascade 
-Hibernate: drop table if exists orders cascade 
-Hibernate: drop table if exists users cascade 
-2025-10-09T10:24:35.662Z  INFO 67833 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2025-10-09T10:24:35.664Z  INFO 67833 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2025-10-09T10:24:35.675Z  INFO 67833 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-10-09T10:24:35.686Z ERROR 67833 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8081 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8081 or configure this application to listen on another port.
-
-[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
-[[1;34mINFO[m] [1;31mBUILD FAILURE[m
-[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
-[[1;34mINFO[m] Total time:  5.614 s
-[[1;34mINFO[m] Finished at: 2025-10-09T10:24:35Z
-[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
-[[1;31mERROR[m] Failed to execute goal [32morg.springframework.boot:spring-boot-maven-plugin:3.2.2:run[m [1m(default-cli)[m on project [36mcookie-store[m: [1;31mProcess terminated with exit code: 1[m -> [1m[Help 1][m
-[[1;31mERROR[m] 
-[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
-[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
-[[1;31mERROR[m] 
-[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
-[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+2025-10-09T10:41:49.309Z  INFO 75151 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-09T10:41:49.792Z  WARN 75151 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-09T10:41:50.364Z  INFO 75151 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@363e2009, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7b55fc83, org.springframework.security.web.context.SecurityContextHolderFilter@43c64d6f, org.springframework.security.web.header.HeaderWriterFilter@2be208db, org.springframework.web.filter.CorsFilter@3615f8d9, org.springframework.security.web.authentication.logout.LogoutFilter@4552e288, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@188532da, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@f10927f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5d200dce, org.springframework.security.web.session.SessionManagementFilter@3fc2e100, org.springframework.security.web.access.ExceptionTranslationFilter@7a57c5d9, org.springframework.security.web.access.intercept.AuthorizationFilter@c3836b6]
+2025-10-09T10:41:50.905Z  INFO 75151 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2025-10-09T10:41:50.920Z  INFO 75151 --- [           main] c.examly.springapp.SpringappApplication  : Started SpringappApplication in 4.347 seconds (process running for 4.561)
+Hibernate: select count(*) from users u1_0
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+✓ Users initialized with roles: ADMIN, MANAGER, BAKER, USER
+Hibernate: select count(*) from cookie c1_0
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+Hibernate: insert into cookie (cookie_name,flavor,price,quantity_available,id) values (?,?,?,?,default)
+✓ 27 diverse cookie varieties initialized across multiple categories
+Hibernate: select count(*) from orders o1_0
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+Hibernate: insert into orders (cookie_name,customer_name,order_date,quantity,status,total_price,id) values (?,?,?,?,?,?,default)
+✓ 23 diverse sample orders created with realistic scenarios
+2025-10-09T10:42:10.360Z  INFO 75151 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-09T10:42:10.360Z  INFO 75151 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-10-09T10:42:10.361Z  INFO 75151 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: insert into users (password,role,username,id) values (?,?,?,default)
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select o1_0.id,o1_0.cookie_name,o1_0.customer_name,o1_0.order_date,o1_0.quantity,o1_0.status,o1_0.total_price from orders o1_0
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select o1_0.id,o1_0.cookie_name,o1_0.customer_name,o1_0.order_date,o1_0.quantity,o1_0.status,o1_0.total_price from orders o1_0
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select o1_0.id,o1_0.cookie_name,o1_0.customer_name,o1_0.order_date,o1_0.quantity,o1_0.status,o1_0.total_price from orders o1_0 where upper(o1_0.customer_name) like upper(?) escape '\'
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select o1_0.id,o1_0.cookie_name,o1_0.customer_name,o1_0.order_date,o1_0.quantity,o1_0.status,o1_0.total_price from orders o1_0
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0 where upper(c1_0.cookie_name) like upper(?) escape '\'
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0 where upper(c1_0.cookie_name) like upper(?) escape '\'
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0 where upper(c1_0.cookie_name) like upper(?) escape '\'
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0 where upper(c1_0.cookie_name) like upper(?) escape '\'
+Hibernate: select o1_0.id,o1_0.cookie_name,o1_0.customer_name,o1_0.order_date,o1_0.quantity,o1_0.status,o1_0.total_price from orders o1_0
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0
+Hibernate: select c1_0.id,c1_0.cookie_name,c1_0.flavor,c1_0.price,c1_0.quantity_available from cookie c1_0

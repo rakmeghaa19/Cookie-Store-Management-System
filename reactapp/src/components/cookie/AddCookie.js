@@ -19,7 +19,7 @@ function AddCookie() {
 
     try {
       const response = await fetch(
-        "https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/cookies/addCookies",
+        "https://8080-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/cookies/addCookies",
         {
           method: "POST",
           headers: {
