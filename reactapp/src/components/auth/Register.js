@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
-
+import axios from 'axios'
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', password: '', role: 'USER' });
   const [error, setError] = useState('');
@@ -14,21 +14,13 @@ const Register = () => {
     setError('');
 
     try {
-      const response = await fetch('https://8083-dddabaffaddabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        navigate('/login');
-      } else {
-        setError(data.error || 'Registration failed');
-      }
+      await axios.post("https://8080-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/auth/register",formData)
+      alert("Registered Sucessfully")
+              navigate('/login');
     } catch (err) {
       setError('Network error');
+      console.error(error)
     } finally {
       setLoading(false);
     }

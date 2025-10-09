@@ -113,7 +113,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(List.of(
-            "https://8081-dddabaffaddabaaeaedaacebfbabbcbebecf.premiumproject.examly.io",
+            "https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io",
             "http://localhost:3000"
         ));
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

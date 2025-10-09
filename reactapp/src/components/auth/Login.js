@@ -14,7 +14,7 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      const response = await fetch('https://8080-dddabaffaddabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/auth/login', {
+      const response = await fetch('https://8080-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
