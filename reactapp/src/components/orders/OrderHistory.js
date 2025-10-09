@@ -164,6 +164,9 @@ const OrderHistory = ({ user }) => {
         <h2>📦 Order History</h2>
         <div className="header-controls">
           <span className="order-count">{filteredOrders.length} of {orders.length} orders</span>
+          <button onClick={() => window.location.href = '/cookies'} className="browse-cookies-btn">
+            🍪 Browse Cookies
+          </button>
           <button onClick={loadOrders} className="refresh-btn">🔄 Refresh</button>
         </div>
       </div>
@@ -201,7 +204,7 @@ const OrderHistory = ({ user }) => {
         <div className="empty-orders">
           <p>{orders.length === 0 ? 'No orders yet' : 'No orders match your filters'}</p>
           <button onClick={() => window.location.href = '/cookies'} className="shop-btn">
-            Start Shopping
+            🍪 Browse Cookies
           </button>
         </div>
       ) : (
