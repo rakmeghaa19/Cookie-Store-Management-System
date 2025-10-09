@@ -1,173 +1,109 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  getAllCookies,
+  searchCookies,
+  getCookiesByFlavor,
+} from "../../services/api";
 import CookieCard from "./CookieCard";
-import { getAllCookies, searchCookies, getCookiesByFlavor } from "../../services/api";
-import "./Cookie.css";
 
-function CookieList({ cookies: propCookies, onDelete, user }) {
-  const [cookies, setCookies] = useState(propCookies || []);
+const CookieList = () => {
+  const [cookies, setCookies] = useState([]);
   const [filteredCookies, setFilteredCookies] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFlavor, setSelectedFlavor] = useState("");
-  const [sortBy, setSortBy] = useState("name");
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 });
-  const [loading, setLoading] = useState(false);
+  const [flavorFilter, setFlavorFilter] = useState("");
 
-  useEffect(() => {
-    if (!propCookies) loadCookies();
-  }, [propCookies]);
-
-  useEffect(() => {
-    filterAndSortCookies();
-  }, [cookies, searchTerm, selectedFlavor, sortBy, priceRange]);
-
+  // Load all cookies initially
   const loadCookies = async () => {
-    setLoading(true);
     try {
-      const response = await getAllCookies();
-      setCookies(response.data || []);
+      setLoading(true);
+      const res = await getAllCookies();
+      setCookies(res.data);
+      setFilteredCookies(res.data);
     } catch (error) {
-      console.error('Error loading cookies:', error);
+      console.error("Error loading cookies:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const filterAndSortCookies = () => {
-    let filtered = [...cookies];
+  useEffect(() => {
+    loadCookies();
+  }, []);
 
-    if (searchTerm) {
-      filtered = filtered.filter(cookie => 
-        cookie.cookieName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cookie.flavor.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  // Search cookies
+  const handleSearch = async (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
 
-    if (selectedFlavor) {
-      filtered = filtered.filter(cookie => cookie.flavor === selectedFlavor);
-    }
-
-    filtered = filtered.filter(cookie => 
-      cookie.price >= priceRange.min && cookie.price <= priceRange.max
-    );
-
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low": return a.price - b.price;
-        case "price-high": return b.price - a.price;
-        case "quantity": return b.quantityAvailable - a.quantityAvailable;
-        case "name": return a.cookieName.localeCompare(b.cookieName);
-        default: return 0;
-      }
-    });
-
-    setFilteredCookies(filtered);
-  };
-
-  const addToCart = (cookie) => {
-    if (!user) {
-      alert('Please login to add items to cart');
+    if (term.trim() === "") {
+      setFilteredCookies(cookies);
       return;
     }
-    
-    const cart = JSON.parse(localStorage.getItem(`cart_${user.username}`) || '[]');
-    const existingItem = cart.find(item => item.id === cookie.id);
-    
-    // Add original price for sale items
-    const cartItem = { 
-      ...cookie, 
-      quantity: 1,
-      originalPrice: cookie.cookieName.includes('Flash Sale') ? cookie.price + 10 :
-                    cookie.cookieName.includes('Daily Special') ? cookie.price + 6 : null
-    };
-    
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push(cartItem);
+
+    try {
+      const res = await searchCookies(term);
+      setFilteredCookies(res.data);
+    } catch (error) {
+      console.error("Error searching cookies:", error);
     }
-    
-    localStorage.setItem(`cart_${user.username}`, JSON.stringify(cart));
-    alert(`${cookie.cookieName} added to cart!`);
   };
 
-  const uniqueFlavors = [...new Set(cookies.map(cookie => cookie.flavor))];
+  // Filter by flavor
+  const handleFlavorFilter = async (e) => {
+    const flavor = e.target.value;
+    setFlavorFilter(flavor);
+
+    if (flavor.trim() === "") {
+      setFilteredCookies(cookies);
+      return;
+    }
+
+    try {
+      const res = await getCookiesByFlavor(flavor);
+      setFilteredCookies(res.data);
+    } catch (error) {
+      console.error("Error filtering cookies:", error);
+    }
+  };
 
   if (loading) return <div className="loading">Loading cookies...</div>;
 
   return (
-    <div className="cookie-section">
-      <div className="cookie-filters">
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search cookies..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
-        
-        <div className="filter-controls">
-          <select 
-            value={selectedFlavor} 
-            onChange={(e) => setSelectedFlavor(e.target.value)}
-            className="flavor-filter"
-          >
-            <option value="">All Flavors</option>
-            {uniqueFlavors.map(flavor => (
-              <option key={flavor} value={flavor}>{flavor}</option>
-            ))}
-          </select>
-          
-          <select 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value)}
-            className="sort-select"
-          >
-            <option value="name">Sort by Name</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="quantity">Stock Level</option>
-          </select>
-          
-          <div className="price-range">
-            <label>Price: ${priceRange.min} - ${priceRange.max}</label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={priceRange.max}
-              onChange={(e) => setPriceRange({...priceRange, max: parseInt(e.target.value)})}
-            />
-          </div>
-        </div>
+    <div className="cookie-list-container">
+      <h2>🍪 Cookie Store</h2>
+
+      <div className="filter-bar">
+        <input
+          type="text"
+          placeholder="Search cookies..."
+          value={searchTerm}
+          onChange={handleSearch}
+          data-testid="search-input"
+        />
+
+        <input
+          type="text"
+          placeholder="Filter by flavor..."
+          value={flavorFilter}
+          onChange={handleFlavorFilter}
+          data-testid="filter-input"
+        />
       </div>
 
-      <div className="results-info">
-        <span>{filteredCookies.length} cookies found</span>
-      </div>
+    {/* //  <CreateCookie onCookieCreated={loadCookies} /> */}
 
-      {filteredCookies.length === 0 ? (
-        <p data-testid="empty-state">No cookies match your criteria</p>
-      ) : (
-        <div className="cookie-list" data-testid="cookie-list">
-          {filteredCookies.map((cookie) => (
-            <div key={cookie.id} className="cookie-card-wrapper">
-              <CookieCard cookie={cookie} onDelete={onDelete} />
-              {user && (
-                <button 
-                  onClick={() => addToCart(cookie)}
-                  className="add-to-cart-btn"
-                  disabled={cookie.quantityAvailable === 0}
-                >
-                  {cookie.quantityAvailable === 0 ? 'Out of Stock' : 'Add to Cart'}
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="cookie-grid">
+        {filteredCookies.length > 0 ? (
+          filteredCookies.map((cookie) => (
+            <CookieCard key={cookie.id} cookie={cookie} />
+          ))
+        ) : (
+          <p data-testid="empty-state">No cookies found</p>
+        )}
+      </div>
     </div>
   );
-}
+};  
 
 export default CookieList;

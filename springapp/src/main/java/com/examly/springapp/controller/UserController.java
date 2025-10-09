@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins="https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io")
 public class UserController {
 
     @Autowired

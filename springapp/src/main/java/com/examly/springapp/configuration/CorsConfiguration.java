@@ -9,8 +9,8 @@ public class CorsConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-        .allowedOrigins("https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io", "http://localhost:3000") 
+        registry.addMapping("/")
+        .allowedOrigins("https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io") 
         .allowCredentials(true)
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         .allowedHeaders("*")

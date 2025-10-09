@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getAllOrders, updateOrderStatus } from '../../services/api';
 import './AdminOrders.css';
 
 const AdminOrders = () => {
@@ -14,16 +15,13 @@ const AdminOrders = () => {
     filterOrders();
   }, [allOrders, statusFilter]);
 
-  const loadAllOrders = () => {
-    const users = ['admin', 'user'];
-    let orders = [];
-    
-    users.forEach(username => {
-      const userOrders = JSON.parse(localStorage.getItem(`orders_${username}`) || '[]');
-      orders = [...orders, ...userOrders.map(order => ({ ...order, username }))];
-    });
-    
-    setAllOrders(orders.sort((a, b) => new Date(b.date) - new Date(a.date)));
+  const loadAllOrders = async () => {
+    try {
+      const orders = await getAllOrders();
+      setAllOrders(orders.sort((a, b) => new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)));
+    } catch (error) {
+      console.error('Failed to load orders:', error);
+    }
   };
 
   const filterOrders = () => {
@@ -34,14 +32,13 @@ const AdminOrders = () => {
     }
   };
 
-  const updateOrderStatus = (orderId, username, newStatus) => {
-    const userOrders = JSON.parse(localStorage.getItem(`orders_${username}`) || '[]');
-    const updatedOrders = userOrders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    );
-    
-    localStorage.setItem(`orders_${username}`, JSON.stringify(updatedOrders));
-    loadAllOrders();
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      loadAllOrders();
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -76,12 +73,12 @@ const AdminOrders = () => {
       ) : (
         <div className="orders-list">
           {filteredOrders.map(order => (
-            <div key={`${order.username}-${order.id}`} className="order-card">
+            <div key={order.id} className="order-card">
               <div className="order-header">
                 <div className="order-info">
                   <h3>Order #{order.id}</h3>
-                  <p>Customer: {order.username}</p>
-                  <p>{new Date(order.date).toLocaleDateString()}</p>
+                  <p>Customer: {order.customerName || order.username}</p>
+                  <p>{new Date(order.orderDate || order.date).toLocaleDateString()}</p>
                 </div>
                 <div className="order-status">
                   <span 
@@ -95,9 +92,9 @@ const AdminOrders = () => {
               </div>
               
               <div className="order-items">
-                {order.items.map((item, index) => (
+                {(order.items || order.orderItems || []).map((item, index) => (
                   <div key={index} className="order-item">
-                    <span>{item.cookieName}</span>
+                    <span>{item.cookieName || item.name}</span>
                     <span>{item.flavor} × {item.quantity}</span>
                     <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
@@ -108,13 +105,13 @@ const AdminOrders = () => {
                 {order.status === 'Processing' && (
                   <>
                     <button 
-                      onClick={() => updateOrderStatus(order.id, order.username, 'Shipped')}
+                      onClick={() => handleUpdateOrderStatus(order.id, 'Shipped')}
                       className="ship-btn"
                     >
                       Ship Order
                     </button>
                     <button 
-                      onClick={() => updateOrderStatus(order.id, order.username, 'Cancelled')}
+                      onClick={() => handleUpdateOrderStatus(order.id, 'Cancelled')}
                       className="cancel-btn"
                     >
                       Cancel
@@ -123,7 +120,7 @@ const AdminOrders = () => {
                 )}
                 {order.status === 'Shipped' && (
                   <button 
-                    onClick={() => updateOrderStatus(order.id, order.username, 'Delivered')}
+                    onClick={() => handleUpdateOrderStatus(order.id, 'Delivered')}
                     className="deliver-btn"
                   >
                     Mark Delivered

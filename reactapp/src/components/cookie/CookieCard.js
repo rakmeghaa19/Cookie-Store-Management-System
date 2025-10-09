@@ -1,20 +1,14 @@
 import React from "react";
-import "./Cookie.css";
 
-function CookieCard({ cookie, onDelete }) {
+const CookieCard = ({ cookie }) => {
   return (
     <div className="cookie-card" data-testid="cookie-card">
-      <h3 data-testid="cookie-name">{cookie.cookieName}</h3>
-      <p data-testid="cookie-flavor">Flavor: {cookie.flavor}</p>
-      <p data-testid="cookie-price">Price: {cookie.price}</p>
-      <p data-testid="cookie-quantity">Quantity: {cookie.quantityAvailable}</p>
-      {onDelete && (
-        <button data-testid="delete-btn" onClick={() => onDelete(cookie.id)}>
-          Delete
-        </button>
-      )}
+      <h3>{cookie.cookieName}</h3>
+      <p><strong>Flavor:</strong> {cookie.flavor}</p>
+      <p><strong>Price:</strong> ₹{cookie.price}</p>
+      <p><strong>Quantity:</strong> {cookie.quantity}</p>
     </div>
   );
-}
+};
 
 export default CookieCard;

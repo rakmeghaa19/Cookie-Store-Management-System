@@ -15,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cookies")
+@CrossOrigin(origins="https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io")
 public class CookieController {
 
     @Autowired

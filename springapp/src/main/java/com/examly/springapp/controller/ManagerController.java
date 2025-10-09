@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/manager")
+@CrossOrigin(origins="https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io")
 public class ManagerController {
 
     @Autowired
