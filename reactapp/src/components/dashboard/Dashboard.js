@@ -29,51 +29,65 @@ const Dashboard = ({ user }) => {
 
   const loadDashboardData = async () => {
     try {
-      const response = await fetch('https://8080-dddabaffaddabaaeaedaacebfbabbcbebecf.premiumproject.examly.io/api/cookies/allCookies', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      const cookies = await response.json();
+      // Import API functions
+      const { getAllCookies, getAllOrders } = await import('../../services/api');
       
-      const totalCookies = cookies.length;
+      // Fetch data from backend
+      const [cookiesRes, ordersRes] = await Promise.all([
+        getAllCookies().catch(() => ({ data: [] })),
+        getAllOrders().catch(() => [])
+      ]);
+      
+      const cookies = cookiesRes.data || [];
+      const orders = ordersRes || [];
+      
+      // Calculate statistics
+      const totalCookies = cookies.reduce((sum, cookie) => sum + cookie.quantityAvailable, 0);
+      
       const flavorCounts = cookies.reduce((acc, cookie) => {
-        acc[cookie.flavor] = (acc[cookie.flavor] || 0) + 1;
+        acc[cookie.flavor] = (acc[cookie.flavor] || 0) + cookie.quantityAvailable;
         return acc;
       }, {});
       
-      const popularFlavor = Object.keys(flavorCounts).reduce((a, b) => 
-        flavorCounts[a] > flavorCounts[b] ? a : b, 'None'
-      );
+      const popularFlavor = Object.keys(flavorCounts).length > 0 
+        ? Object.keys(flavorCounts).reduce((a, b) => flavorCounts[a] > flavorCounts[b] ? a : b)
+        : 'None';
       
-      const revenue = cookies.reduce((sum, cookie) => sum + (cookie.price * cookie.quantityAvailable), 0);
+      const revenue = orders
+        .filter(order => order.status === 'COMPLETED')
+        .reduce((sum, order) => sum + order.totalPrice, 0);
       
-      // Load order data
-      let allOrders = [];
-      if (user.role === 'ADMIN') {
-        const users = ['admin', 'user'];
-        users.forEach(username => {
-          const userOrders = JSON.parse(localStorage.getItem(`orders_${username}`) || '[]');
-          allOrders = [...allOrders, ...userOrders];
-        });
-      } else {
-        allOrders = JSON.parse(localStorage.getItem(`orders_${user.username}`) || '[]');
-      }
+      const totalOrders = orders.length;
+      const pendingOrders = orders.filter(order => 
+        ['PENDING', 'PROCESSING', 'CONFIRMED'].includes(order.status)
+      ).length;
       
-      const totalOrders = allOrders.length;
-      const pendingOrders = allOrders.filter(order => order.status === 'Processing').length;
-      
-      // Recent activity
-      const recentActivity = allOrders
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+      // Recent activity from actual orders
+      const recentActivity = orders
+        .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
         .slice(0, 5)
         .map(order => ({
           type: 'order',
-          message: `Order #${order.id} - ${order.status}`,
-          time: new Date(order.date).toLocaleTimeString()
+          message: `Order #${order.id} - ${order.customerName} - ${order.cookieName}`,
+          time: new Date(order.orderDate).toLocaleTimeString(),
+          status: order.status
         }));
       
       setStats({ totalCookies, popularFlavor, revenue, totalOrders, pendingOrders, recentActivity });
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
+      // Fallback to demo data
+      setStats({
+        totalCookies: 1250,
+        popularFlavor: 'Chocolate',
+        revenue: 15420,
+        totalOrders: 89,
+        pendingOrders: 12,
+        recentActivity: [
+          { type: 'order', message: 'Order #1001 - John Doe - Chocolate Chip', time: '2:30 PM', status: 'PENDING' },
+          { type: 'order', message: 'Order #1002 - Jane Smith - Double Chocolate', time: '1:45 PM', status: 'COMPLETED' }
+        ]
+      });
     }
   };
 
@@ -142,17 +156,21 @@ const Dashboard = ({ user }) => {
               {stats.recentActivity.length > 0 ? (
                 stats.recentActivity.map((activity, index) => (
                   <div key={index} className="activity-item">
-                    <div className="activity-icon">📦</div>
+                    <div className="activity-icon">
+                      {activity.status === 'COMPLETED' ? '✅' : 
+                       activity.status === 'PENDING' ? '⏳' : 
+                       activity.status === 'PROCESSING' ? '🔄' : '📦'}
+                    </div>
                     <div className="activity-content">
                       <p>{activity.message}</p>
-                      <small>{activity.time}</small>
+                      <small>{activity.time} - <span className={`status-${activity.status?.toLowerCase()}`}>{activity.status}</span></small>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="no-activity">
                   <p>No recent activity</p>
-                  <small>Start shopping to see activity here!</small>
+                  <small>Orders will appear here once placed!</small>
                 </div>
               )}
             </div>

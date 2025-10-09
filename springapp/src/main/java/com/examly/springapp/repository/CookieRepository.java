@@ -10,4 +10,7 @@ import java.util.List;
 public interface CookieRepository extends JpaRepository<Cookie, Long> {
     List<Cookie> findByFlavor(String flavor);
     List<Cookie> findAllByOrderByPriceAsc();
+    List<Cookie> findByCookieNameContainingIgnoreCase(String cookieName);
+    List<Cookie> findByPriceLessThanEqual(int maxPrice);
+    List<Cookie> findByQuantityAvailableGreaterThan(int minQuantity);
 }

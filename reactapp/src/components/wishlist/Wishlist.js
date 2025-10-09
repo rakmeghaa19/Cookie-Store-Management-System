@@ -19,55 +19,67 @@ const Wishlist = ({ user }) => {
     localStorage.setItem(`wishlist_${user.username}`, JSON.stringify(updatedWishlist));
   };
 
-  const addToCart = (cookie) => {
+  const moveToCart = (item) => {
     const cart = JSON.parse(localStorage.getItem(`cart_${user.username}`) || '[]');
-    const existingItem = cart.find(item => item.id === cookie.id);
+    const existingItem = cart.find(cartItem => cartItem.id === item.id);
     
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
-      cart.push({ ...cookie, quantity: 1 });
+      cart.push({ ...item, quantity: 1 });
     }
     
     localStorage.setItem(`cart_${user.username}`, JSON.stringify(cart));
-    alert(`${cookie.cookieName} added to cart!`);
+    removeFromWishlist(item.id);
+    alert(`${item.cookieName} moved to cart!`);
   };
 
-  const moveToCart = (cookie) => {
-    addToCart(cookie);
-    removeFromWishlist(cookie.id);
+  const clearWishlist = () => {
+    setWishlistItems([]);
+    localStorage.removeItem(`wishlist_${user.username}`);
   };
 
   return (
     <div className="wishlist">
       <div className="wishlist-header">
-        <h2>❤️ My Wishlist</h2>
-        <span className="item-count">{wishlistItems.length} items</span>
+        <h2>💝 My Wishlist</h2>
+        {wishlistItems.length > 0 && (
+          <button onClick={clearWishlist} className="clear-btn">Clear All</button>
+        )}
       </div>
 
       {wishlistItems.length === 0 ? (
         <div className="empty-wishlist">
           <p>Your wishlist is empty</p>
-          <button onClick={() => window.location.href = '/cookies'} className="browse-btn">
+          <button onClick={() => window.location.href = '/cookies'} className="shop-btn">
             Browse Cookies
           </button>
         </div>
       ) : (
-        <div className="wishlist-grid">
-          {wishlistItems.map(cookie => (
-            <div key={cookie.id} className="wishlist-item">
-              <div className="cookie-info">
-                <h3>{cookie.cookieName}</h3>
-                <p className="flavor">{cookie.flavor}</p>
-                <p className="price">${cookie.price}</p>
-                <p className="stock">Stock: {cookie.quantityAvailable}</p>
+        <div className="wishlist-items">
+          {wishlistItems.map(item => (
+            <div key={item.id} className="wishlist-item">
+              <div className="item-info">
+                <h3>{item.cookieName}</h3>
+                <p className="flavor">{item.flavor}</p>
+                <p className="price">${item.price}</p>
+                <p className="stock">
+                  {item.quantityAvailable > 0 
+                    ? `${item.quantityAvailable} in stock` 
+                    : 'Out of stock'
+                  }
+                </p>
               </div>
               <div className="item-actions">
-                <button onClick={() => moveToCart(cookie)} className="cart-btn">
-                  Add to Cart
+                <button 
+                  onClick={() => moveToCart(item)}
+                  className="move-to-cart-btn"
+                  disabled={item.quantityAvailable === 0}
+                >
+                  {item.quantityAvailable === 0 ? 'Out of Stock' : 'Add to Cart'}
                 </button>
-                <button onClick={() => removeFromWishlist(cookie.id)} className="remove-btn">
-                  ×
+                <button onClick={() => removeFromWishlist(item.id)} className="remove-btn">
+                  Remove
                 </button>
               </div>
             </div>

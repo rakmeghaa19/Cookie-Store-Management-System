@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cookies")
@@ -40,8 +41,20 @@ public class CookieController {
     }
 
     @GetMapping("/allCookies")
-    public List<Cookie> getAllCookies() {
-        return cookieService.getAllCookies();
+    public ResponseEntity<List<Cookie>> getAllCookies() {
+        return ResponseEntity.ok(cookieService.getAllCookies());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Cookie> getCookieById(@PathVariable Long id) {
+        Cookie cookie = cookieService.getCookieById(id);
+        return ResponseEntity.ok(cookie);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Cookie>> searchCookies(@RequestParam String name) {
+        List<Cookie> cookies = cookieService.searchCookiesByName(name);
+        return ResponseEntity.ok(cookies);
     }
 
     @GetMapping("/paginated")
@@ -72,7 +85,8 @@ public class CookieController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteCookie(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteCookie(@PathVariable Long id) {
         cookieService.deleteCookie(id);
+        return ResponseEntity.ok(Map.of("message", "Cookie deleted successfully"));
     }
 }

@@ -45,7 +45,19 @@ public class CookieService {
         return cookieRepository.save(existing);
     }
 
+    public Cookie getCookieById(Long id) {
+        return cookieRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Cookie not found with id: " + id));
+    }
+
+    public List<Cookie> searchCookiesByName(String name) {
+        return cookieRepository.findByCookieNameContainingIgnoreCase(name);
+    }
+
     public void deleteCookie(Long id) {
+        if (!cookieRepository.existsById(id)) {
+            throw new RuntimeException("Cookie not found with id: " + id);
+        }
         cookieRepository.deleteById(id);
     }
 }
