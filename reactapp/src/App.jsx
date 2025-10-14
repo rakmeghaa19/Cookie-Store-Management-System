@@ -9,6 +9,7 @@ import Cart from './components/cart/Cart';
 import Wishlist from './components/wishlist/Wishlist';
 import OrderHistory from './components/orders/OrderHistory';
 import AdminOrders from './components/admin/AdminOrders';
+import OrderHistoryTest from './components/orders/OrderHistoryTest';
 import Footer from './components/footer/Footer';
 import TestCookieApp from './components/cookie/TestCookieApp';
 import { getAllCookies } from './services/api';
@@ -100,6 +101,10 @@ function App() {
             <Route 
               path="/admin-orders" 
               element={user && user.role === 'ADMIN' ? <AdminOrders /> : <Navigate to="/dashboard" />} 
+            />
+            <Route 
+              path="/test-orders" 
+              element={user ? <OrderHistoryTest /> : <Navigate to="/login" />} 
             />
             <Route 
               path="/" 

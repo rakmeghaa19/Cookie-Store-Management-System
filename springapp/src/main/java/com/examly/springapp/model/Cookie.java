@@ -13,12 +13,12 @@ public class Cookie {
     private Long id;
     private String cookieName;
     private String flavor;
-    private int price;
+    private double price;
     private int quantityAvailable;
 
     public Cookie() {}
 
-    public Cookie(String cookieName, String flavor, int price, int quantityAvailable) {
+    public Cookie(String cookieName, String flavor, double price, int quantityAvailable) {
         this.cookieName = cookieName;
         this.flavor = flavor;
         this.price = price;
@@ -32,8 +32,8 @@ public class Cookie {
     public void setCookieName(String cookieName) { this.cookieName = cookieName; }
     public String getFlavor() { return flavor; }
     public void setFlavor(String flavor) { this.flavor = flavor; }
-    public int getPrice() { return price; }
-    public void setPrice(int price) { this.price = price; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
     public int getQuantityAvailable() { return quantityAvailable; }
     public void setQuantityAvailable(int quantityAvailable) { this.quantityAvailable = quantityAvailable; }
 }

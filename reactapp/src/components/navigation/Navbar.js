@@ -42,6 +42,9 @@ const Navbar = ({ user, onLogout }) => {
                 <span className="nav-item zoom-hover" onClick={() => navigate('/orders')}>
                   📦 Orders
                 </span>
+                <span className="nav-item zoom-hover" onClick={() => navigate('/test-orders')}>
+                  🧪 Test
+                </span>
               </>
             )}
             {user.role === 'ADMIN' && (

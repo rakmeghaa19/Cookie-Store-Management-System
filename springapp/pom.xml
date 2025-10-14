@@ -8,7 +8,6 @@
     <artifactId>cookie-store</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-
     <name>Cookie Store Management System</name>
     <description>Spring Boot project for cookie store management</description>
 

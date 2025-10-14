@@ -25,38 +25,50 @@ const OrderHistory = ({ user }) => {
     setLoading(true);
     try {
       let backendOrders = [];
+      let hasBackendOrders = false;
       
-      if (user.role === 'ADMIN' || user.role === 'MANAGER') {
-        const response = await getAllOrders();
-        backendOrders = response || [];
-      } else {
-        // For regular users, try to get their orders by name
-        try {
-          const response = await getOrdersByCustomer(user.username);
-          backendOrders = response || [];
-        } catch (error) {
-          console.log('No backend orders found for user');
+      // Try to load from backend first
+      try {
+        if (user.role === 'ADMIN' || user.role === 'MANAGER') {
+          backendOrders = await getAllOrders();
+        } else {
+          backendOrders = await getOrdersByCustomer(user.username);
         }
+        hasBackendOrders = Array.isArray(backendOrders) && backendOrders.length > 0;
+        console.log('Backend orders loaded:', backendOrders);
+      } catch (backendError) {
+        console.log('Backend not available, using local storage:', backendError.message);
       }
       
-      // Also load localStorage orders for compatibility
+      // Load from localStorage
       const localOrders = JSON.parse(localStorage.getItem(`orders_${user.username}`) || '[]');
+      console.log('Local orders loaded:', localOrders);
       
-      // Combine and deduplicate orders
-      const allOrders = [...backendOrders, ...localOrders];
-      const uniqueOrders = allOrders.filter((order, index, self) => 
-        index === self.findIndex(o => o.id === order.id)
-      );
+      // Combine backend and local orders, prioritizing backend
+      let allOrders = [];
+      if (hasBackendOrders) {
+        // Use backend orders and merge with local orders that don't exist in backend
+        const backendOrderIds = new Set(backendOrders.map(order => order.id));
+        const uniqueLocalOrders = localOrders.filter(order => !backendOrderIds.has(order.id));
+        allOrders = [...backendOrders, ...uniqueLocalOrders];
+      } else {
+        // Use only local orders if backend is not available
+        allOrders = localOrders;
+      }
       
-      setOrders(uniqueOrders.sort((a, b) => 
-        new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
-      ));
+      // Sort by date (newest first)
+      allOrders.sort((a, b) => {
+        const dateA = new Date(a.orderDate || a.date);
+        const dateB = new Date(b.orderDate || b.date);
+        return dateB - dateA;
+      });
+      
+      setOrders(allOrders);
+      console.log('Final orders set:', allOrders);
     } catch (error) {
       console.error('Error loading orders:', error);
-      // Always load from localStorage
+      // Final fallback to localStorage only
       const savedOrders = JSON.parse(localStorage.getItem(`orders_${user.username}`) || '[]');
-      console.log('Loaded orders for user:', user.username, savedOrders);
-      
       setOrders(savedOrders.sort((a, b) => new Date(b.date || b.orderDate) - new Date(a.date || a.orderDate)));
     }
     setLoading(false);
@@ -122,22 +134,26 @@ const OrderHistory = ({ user }) => {
     if (!window.confirm('Are you sure you want to cancel this order?')) return;
     
     try {
-      if (user.role === 'ADMIN' || user.role === 'MANAGER') {
+      // Try to cancel via backend API first
+      try {
         await updateOrderStatus(orderId, 'CANCELLED');
+        alert('Order cancelled successfully');
+      } catch (backendError) {
+        console.log('Backend cancel failed, updating local storage:', backendError);
+        // Fallback to local storage update
+        const localOrders = JSON.parse(localStorage.getItem(`orders_${user.username}`) || '[]');
+        const updatedOrders = localOrders.map(order => 
+          order.id === orderId ? { ...order, status: 'CANCELLED' } : order
+        );
+        localStorage.setItem(`orders_${user.username}`, JSON.stringify(updatedOrders));
+        alert('Order cancelled successfully');
       }
       
-      // Update local storage
-      const localOrders = JSON.parse(localStorage.getItem(`orders_${user.username}`) || '[]');
-      const updatedOrders = localOrders.map(order => 
-        order.id === orderId ? { ...order, status: 'CANCELLED' } : order
-      );
-      localStorage.setItem(`orders_${user.username}`, JSON.stringify(updatedOrders));
-      
+      // Reload orders to reflect changes
       loadOrders();
-      alert('Order cancelled successfully');
     } catch (error) {
       console.error('Error cancelling order:', error);
-      alert('Error cancelling order');
+      alert('Error cancelling order: ' + error.message);
     }
   };
 
@@ -238,7 +254,12 @@ Visit us again for more delicious treats!
     URL.revokeObjectURL(url);
   };
 
-  if (loading) return <div className="loading">Loading orders...</div>;
+  if (loading) return (
+    <div className="loading" style={{textAlign: 'center', padding: '50px'}}>
+      <div style={{fontSize: '18px', marginBottom: '10px'}}>📦 Loading your orders...</div>
+      <div style={{fontSize: '14px', color: '#666'}}>Please wait while we fetch your order history</div>
+    </div>
+  );
 
   return (
     <div className="order-history">
@@ -285,10 +306,15 @@ Visit us again for more delicious treats!
 
       {filteredOrders.length === 0 ? (
         <div className="empty-orders">
-          <p>{orders.length === 0 ? 'No orders yet' : 'No orders match your filters'}</p>
+          <p>{orders.length === 0 ? 'No orders found. Start shopping to see your order history!' : 'No orders match your current filters'}</p>
           <button onClick={() => window.location.href = '/cookies'} className="shop-btn">
             🍪 Browse Cookies
           </button>
+          {orders.length === 0 && (
+            <p style={{marginTop: '10px', fontSize: '14px', color: '#666'}}>
+              Orders will appear here after you place them
+            </p>
+          )}
         </div>
       ) : (
         <div className="orders-list">
@@ -371,9 +397,10 @@ Visit us again for more delicious treats!
                 <button 
                   onClick={() => cancelOrder(order.id)}
                   className="cancel-btn"
-                  disabled={order.status === 'CANCELLED'}
+                  disabled={order.status === 'CANCELLED' || order.status === 'COMPLETED' || order.status === 'DELIVERED'}
                 >
-                  {order.status === 'CANCELLED' ? 'Cancelled' : '❌ Cancel Order'}
+                  {order.status === 'CANCELLED' ? 'Cancelled' : 
+                   (order.status === 'COMPLETED' || order.status === 'DELIVERED') ? 'Cannot Cancel' : '❌ Cancel Order'}
                 </button>
               </div>
               

@@ -155,16 +155,24 @@ const Cart = ({ user }) => {
       }
     }
     
+    if (cartItems.length === 0) {
+      alert('Cart is empty!');
+      return;
+    }
+    
     setIsCheckingOut(true);
+    console.log('Processing payment for:', cartItems.length, 'items');
     
     try {
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Save to localStorage first (always works)
+      const currentDate = new Date();
       const order = {
         id: Date.now().toString(),
-        date: new Date().toISOString(),
+        date: currentDate.toISOString(),
+        orderDate: currentDate.toISOString(),
         items: cartItems,
         total: total,
         subtotal: subtotal,
@@ -187,15 +195,17 @@ const Cart = ({ user }) => {
             customerName: customerName.trim(),
             cookieName: item.cookieName,
             quantity: item.quantity,
-            totalPrice: item.price * item.quantity
+            totalPrice: item.price * item.quantity,
+            status: 'PENDING'
           };
           await createOrder(orderData);
         }
+        console.log('Orders successfully saved to backend');
       } catch (backendError) {
-        console.log('Backend unavailable, order saved locally');
+        console.log('Backend unavailable, order saved locally:', backendError.message);
       }
       
-      alert(`Payment successful! Order confirmed. Total: $${total.toFixed(2)}`);
+      alert(`✅ Payment successful! Order confirmed.\nTotal: $${total.toFixed(2)}\nOrder ID: ${order.id}`);
       clearCart();
       setCustomerName('');
       setOrderNotes('');
@@ -206,7 +216,11 @@ const Cart = ({ user }) => {
       setExpiryDate('');
       setCvv('');
       setCardName('');
-      navigate('/orders');
+      
+      // Small delay before navigation to ensure state updates
+      setTimeout(() => {
+        navigate('/orders');
+      }, 1000);
     } catch (error) {
       console.error('Payment error:', error);
       alert('Payment failed. Please try again.');

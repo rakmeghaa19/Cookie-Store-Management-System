@@ -17,7 +17,21 @@ const Dashboard = ({ user }) => {
     loadDashboardData();
     updateGreeting();
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    
+    // Listen for storage changes to refresh dashboard when orders are added
+    const handleStorageChange = () => {
+      loadDashboardData();
+    };
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also refresh every 30 seconds
+    const refreshTimer = setInterval(loadDashboardData, 30000);
+    
+    return () => {
+      clearInterval(timer);
+      clearInterval(refreshTimer);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const updateGreeting = () => {
@@ -64,14 +78,16 @@ const Dashboard = ({ user }) => {
       
       // Recent activity from actual orders
       const recentActivity = orders
-        .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
+        .filter(order => order.orderDate || order.date) // Check both date fields
+        .sort((a, b) => new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date))
         .slice(0, 5)
-        .map(order => ({
-          type: 'order',
-          message: `Order #${order.id} - ${order.customerName} - ${order.cookieName}`,
-          time: new Date(order.orderDate).toLocaleTimeString(),
-          status: order.status
-        }));
+        .map(order => {
+          return {
+            type: 'order',
+            message: `${order.customerName || 'Customer'} ordered ${order.cookieName} (Qty: ${order.quantity})`,
+            status: order.status || 'PENDING'
+          };
+        });
       
       setStats({ totalCookies, popularFlavor, revenue, totalOrders, pendingOrders, recentActivity });
     } catch (err) {
@@ -84,8 +100,9 @@ const Dashboard = ({ user }) => {
         totalOrders: 89,
         pendingOrders: 12,
         recentActivity: [
-          { type: 'order', message: 'Order #1001 - John Doe - Chocolate Chip', time: '2:30 PM', status: 'PENDING' },
-          { type: 'order', message: 'Order #1002 - Jane Smith - Double Chocolate', time: '1:45 PM', status: 'COMPLETED' }
+          { type: 'order', message: 'Demo order - Chocolate Chip (Qty: 2)', status: 'PENDING' },
+          { type: 'order', message: 'Demo order - Double Chocolate (Qty: 1)', status: 'COMPLETED' },
+          { type: 'order', message: 'Demo order - Vanilla (Qty: 3)', status: 'PROCESSING' }
         ]
       });
     }
@@ -150,6 +167,50 @@ const Dashboard = ({ user }) => {
         </div>
 
         <div className="dashboard-grid">
+          {/* Analytics Charts */}
+          {user.role === 'ADMIN' && (
+            <div className="analytics-section">
+              <h2>📊 Analytics Overview</h2>
+              <div className="charts-grid">
+                <div className="chart-card">
+                  <h3>Sales Trend</h3>
+                  <div className="simple-chart">
+                    <div className="chart-bars">
+                      <div className="bar" style={{height: '60%'}} title="Mon: $120"></div>
+                      <div className="bar" style={{height: '80%'}} title="Tue: $160"></div>
+                      <div className="bar" style={{height: '45%'}} title="Wed: $90"></div>
+                      <div className="bar" style={{height: '90%'}} title="Thu: $180"></div>
+                      <div className="bar" style={{height: '70%'}} title="Fri: $140"></div>
+                    </div>
+                    <div className="chart-labels">
+                      <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="chart-card">
+                  <h3>Top Flavors</h3>
+                  <div className="flavor-stats">
+                    <div className="flavor-item">
+                      <span>🍫 Chocolate</span>
+                      <div className="progress-bar"><div style={{width: '85%'}}></div></div>
+                      <span>85%</span>
+                    </div>
+                    <div className="flavor-item">
+                      <span>🍓 Strawberry</span>
+                      <div className="progress-bar"><div style={{width: '65%'}}></div></div>
+                      <span>65%</span>
+                    </div>
+                    <div className="flavor-item">
+                      <span>🍦 Vanilla</span>
+                      <div className="progress-bar"><div style={{width: '45%'}}></div></div>
+                      <span>45%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="activity-feed">
             <h2>📈 Recent Activity</h2>
             <div className="activity-list">
@@ -163,7 +224,7 @@ const Dashboard = ({ user }) => {
                     </div>
                     <div className="activity-content">
                       <p>{activity.message}</p>
-                      <small>{activity.time} - <span className={`status-${activity.status?.toLowerCase()}`}>{activity.status}</span></small>
+                      <small><span className={`status-${activity.status?.toLowerCase()}`}>{activity.status}</span></small>
                     </div>
                   </div>
                 ))

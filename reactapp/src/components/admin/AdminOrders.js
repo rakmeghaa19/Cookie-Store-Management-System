@@ -19,33 +19,42 @@ const AdminOrders = () => {
     try {
       let allOrdersList = [];
       
-      // Try to load from backend
+      // Try to load from backend first
       try {
         const backendOrders = await getAllOrders();
-        allOrdersList = [...backendOrders];
+        if (backendOrders && backendOrders.length > 0) {
+          allOrdersList = [...backendOrders];
+        } else {
+          // Only load from localStorage if no backend orders
+          const allLocalStorageKeys = Object.keys(localStorage);
+          const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
+          
+          orderKeys.forEach(key => {
+            try {
+              const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+              allOrdersList = [...allOrdersList, ...userOrders];
+            } catch (error) {
+              console.log(`Error loading orders from ${key}`);
+            }
+          });
+        }
       } catch (error) {
-        console.log('Backend orders not available');
+        console.log('Backend orders not available, loading from localStorage');
+        // Load from localStorage for all users as fallback
+        const allLocalStorageKeys = Object.keys(localStorage);
+        const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
+        
+        orderKeys.forEach(key => {
+          try {
+            const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+            allOrdersList = [...allOrdersList, ...userOrders];
+          } catch (error) {
+            console.log(`Error loading orders from ${key}`);
+          }
+        });
       }
       
-      // Load from localStorage for all users
-      const allLocalStorageKeys = Object.keys(localStorage);
-      const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
-      
-      orderKeys.forEach(key => {
-        try {
-          const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
-          allOrdersList = [...allOrdersList, ...userOrders];
-        } catch (error) {
-          console.log(`Error loading orders from ${key}`);
-        }
-      });
-      
-      // Remove duplicates based on order ID
-      const uniqueOrders = allOrdersList.filter((order, index, self) => 
-        index === self.findIndex(o => o.id === order.id)
-      );
-      
-      setAllOrders(uniqueOrders.sort((a, b) => 
+      setAllOrders(allOrdersList.sort((a, b) => 
         new Date(b.orderDate || b.date) - new Date(a.orderDate || a.date)
       ));
     } catch (error) {
@@ -70,25 +79,32 @@ const AdminOrders = () => {
         console.log('Backend update failed, updating localStorage');
       }
       
-      // Update in localStorage for all users
-      const allLocalStorageKeys = Object.keys(localStorage);
-      const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
-      
-      orderKeys.forEach(key => {
-        try {
-          const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
-          const orderFound = userOrders.find(order => order.id === orderId);
-          if (orderFound) {
-            const updatedOrders = userOrders.map(order => 
-              order.id === orderId ? { ...order, status: newStatus } : order
-            );
-            localStorage.setItem(key, JSON.stringify(updatedOrders));
-            console.log(`Updated order ${orderId} status to ${newStatus} in ${key}`);
+      // Update in localStorage only if backend update failed
+      try {
+        await updateOrderStatus(orderId, newStatus);
+        console.log('Backend order status updated successfully');
+      } catch (backendError) {
+        console.log('Backend update failed, updating localStorage');
+        // Update in localStorage for all users as fallback
+        const allLocalStorageKeys = Object.keys(localStorage);
+        const orderKeys = allLocalStorageKeys.filter(key => key.startsWith('orders_'));
+        
+        orderKeys.forEach(key => {
+          try {
+            const userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+            const orderFound = userOrders.find(order => order.id === orderId);
+            if (orderFound) {
+              const updatedOrders = userOrders.map(order => 
+                order.id === orderId ? { ...order, status: newStatus } : order
+              );
+              localStorage.setItem(key, JSON.stringify(updatedOrders));
+              console.log(`Updated order ${orderId} status to ${newStatus} in ${key}`);
+            }
+          } catch (error) {
+            console.error(`Error updating orders in ${key}:`, error);
           }
-        } catch (error) {
-          console.error(`Error updating orders in ${key}:`, error);
-        }
-      });
+        });
+      }
       
       alert(`Order status updated to ${newStatus}`);
       loadAllOrders();

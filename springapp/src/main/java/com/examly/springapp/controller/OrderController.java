@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins="https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io")
+@CrossOrigin(origins={"https://8081-fecafffabfdabaaeaedaacebfbabbcbebecf.premiumproject.examly.io", "http://localhost:8081"})
 public class OrderController {
 
     @Autowired

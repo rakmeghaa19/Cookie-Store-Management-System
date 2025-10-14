@@ -1,14 +1,10 @@
 package com.examly.springapp.service;
 
-import com.examly.springapp.model.Cookie;
 import com.examly.springapp.model.Order;
-import com.examly.springapp.repository.CookieRepository;
 import com.examly.springapp.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,31 +12,8 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-    
-    @Autowired
-    private CookieRepository cookieRepository;
 
-    @Transactional
     public Order createOrder(Order order) {
-        // Validate cookie availability
-        Cookie cookie = cookieRepository.findByCookieNameContainingIgnoreCase(order.getCookieName())
-            .stream()
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Cookie not found: " + order.getCookieName()));
-        
-        if (cookie.getQuantityAvailable() < order.getQuantity()) {
-            throw new RuntimeException("Insufficient quantity available. Available: " + cookie.getQuantityAvailable());
-        }
-        
-        // Calculate total price
-        order.setTotalPrice(cookie.getPrice() * order.getQuantity());
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus("PENDING");
-        
-        // Update cookie quantity
-        cookie.setQuantityAvailable(cookie.getQuantityAvailable() - order.getQuantity());
-        cookieRepository.save(cookie);
-        
         return orderRepository.save(order);
     }
 
@@ -50,7 +23,7 @@ public class OrderService {
 
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+            .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
     public List<Order> getOrdersByCustomer(String customerName) {
@@ -62,15 +35,13 @@ public class OrderService {
     }
 
     public Order updateOrder(Long id, Order orderDetails) {
-        Order existingOrder = getOrderById(id);
-        
-        existingOrder.setCustomerName(orderDetails.getCustomerName());
-        existingOrder.setCookieName(orderDetails.getCookieName());
-        existingOrder.setQuantity(orderDetails.getQuantity());
-        existingOrder.setTotalPrice(orderDetails.getTotalPrice());
-        existingOrder.setStatus(orderDetails.getStatus());
-        
-        return orderRepository.save(existingOrder);
+        Order order = getOrderById(id);
+        order.setCustomerName(orderDetails.getCustomerName());
+        order.setCookieName(orderDetails.getCookieName());
+        order.setQuantity(orderDetails.getQuantity());
+        order.setTotalPrice(orderDetails.getTotalPrice());
+        order.setStatus(orderDetails.getStatus());
+        return orderRepository.save(order);
     }
 
     public Order updateOrderStatus(Long id, String status) {
@@ -79,20 +50,10 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    @Transactional
     public void deleteOrder(Long id) {
-        Order order = getOrderById(id);
-        
-        // If order is cancelled, restore cookie quantity
-        if ("PENDING".equals(order.getStatus()) || "PROCESSING".equals(order.getStatus())) {
-            List<Cookie> cookies = cookieRepository.findByCookieNameContainingIgnoreCase(order.getCookieName());
-            if (!cookies.isEmpty()) {
-                Cookie cookie = cookies.get(0);
-                cookie.setQuantityAvailable(cookie.getQuantityAvailable() + order.getQuantity());
-                cookieRepository.save(cookie);
-            }
+        if (!orderRepository.existsById(id)) {
+            throw new RuntimeException("Order not found");
         }
-        
         orderRepository.deleteById(id);
     }
 }

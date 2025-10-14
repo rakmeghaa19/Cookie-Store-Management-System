@@ -10,10 +10,23 @@ const getAuthHeaders = () => {
 
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || `HTTP ${response.status}`);
+    let errorMessage;
+    try {
+      const errorText = await response.text();
+      errorMessage = errorText || `HTTP ${response.status}: ${response.statusText}`;
+    } catch (e) {
+      errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+    }
+    console.error('API Error:', errorMessage);
+    throw new Error(errorMessage);
   }
-  return response.json();
+  
+  try {
+    return await response.json();
+  } catch (e) {
+    console.error('JSON parsing error:', e);
+    throw new Error('Invalid response format');
+  }
 };
 
 // Cookie API
@@ -76,10 +89,18 @@ export async function deleteCookie(id) {
 
 // Order API
 export async function getAllOrders() {
-  const res = await fetch(`${API_BASE}/api/orders`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(res);
+  try {
+    console.log('Fetching all orders from:', `${API_BASE}/api/orders`);
+    const res = await fetch(`${API_BASE}/api/orders`, {
+      headers: getAuthHeaders()
+    });
+    const data = await handleResponse(res);
+    console.log('All orders response:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching all orders:', error);
+    throw error;
+  }
 }
 
 export async function getOrderById(id) {
@@ -90,10 +111,19 @@ export async function getOrderById(id) {
 }
 
 export async function getOrdersByCustomer(customerName) {
-  const res = await fetch(`${API_BASE}/api/orders/customer/${encodeURIComponent(customerName)}`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(res);
+  try {
+    const url = `${API_BASE}/api/orders/customer/${encodeURIComponent(customerName)}`;
+    console.log('Fetching orders for customer:', customerName, 'URL:', url);
+    const res = await fetch(url, {
+      headers: getAuthHeaders()
+    });
+    const data = await handleResponse(res);
+    console.log('Customer orders response:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching customer orders:', error);
+    throw error;
+  }
 }
 
 export async function getOrdersByStatus(status) {
@@ -122,12 +152,21 @@ export async function updateOrder(id, order) {
 }
 
 export async function updateOrderStatus(id, status) {
-  const res = await fetch(`${API_BASE}/api/orders/${id}/status`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ status }),
-  });
-  return handleResponse(res);
+  try {
+    const url = `${API_BASE}/api/orders/${id}/status`;
+    console.log('Updating order status:', { id, status, url });
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ status }),
+    });
+    const data = await handleResponse(res);
+    console.log('Update order status response:', data);
+    return data;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    throw error;
+  }
 }
 
 export async function deleteOrder(id) {
