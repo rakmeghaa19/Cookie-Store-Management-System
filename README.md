@@ -468,11 +468,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - H2 Database
 - Lucide Icons
 
-## 📞 Support
-
-For support, email your-email@example.com or open an issue in the repository.
-
----
 
 ⭐ **Star this repository if you find it helpful!**
 
