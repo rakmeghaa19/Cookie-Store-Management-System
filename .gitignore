@@ -1,0 +1,4 @@
+reactapp/node_modules/
+springapp/target/
+*.log
+*.tar.gz
